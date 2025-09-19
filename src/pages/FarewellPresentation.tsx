@@ -96,7 +96,6 @@ const FarewellPresentation: React.FC = () => {
   const nextSection = () => {
     setCurrentSection(prev => {
       const next = prev + 1;
-      console.log(`Navegando a sección ${next}`);
       return Math.min(next, sections.length - 1);
     });
   };
@@ -104,7 +103,6 @@ const FarewellPresentation: React.FC = () => {
   const prevSection = () => {
     setCurrentSection(prev => {
       const newSection = Math.max(prev - 1, 0);
-      console.log(`Navegando atrás a sección ${newSection}`);
       return newSection;
     });
   };

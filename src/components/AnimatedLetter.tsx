@@ -55,33 +55,33 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({
   }, [currentChar, currentParagraph, letterContent, onComplete]);
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Skip button */}
       {isWriting && (
         <button 
           onClick={skipAnimation}
-          className="absolute top-4 right-4 z-20 bg-primary/90 text-primary-foreground px-3 py-1 rounded-md text-sm font-medium hover:bg-primary transition-colors"
+          className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20 bg-primary/90 text-primary-foreground px-3 py-2 rounded-lg text-xs sm:text-sm font-medium hover:bg-primary transition-all duration-300 hover:scale-105 shadow-lg backdrop-blur-sm"
         >
-          Saltar
+          ⚡ Saltar
         </button>
       )}
       
       {/* Letter Paper */}
-      <div className="bg-amber-50 backdrop-blur-sm p-6 sm:p-8 lg:p-12 rounded-lg shadow-2xl border border-amber-300 relative overflow-hidden mx-auto">
+      <div className="bg-gradient-to-br from-amber-50 to-orange-50 backdrop-blur-sm p-4 sm:p-6 md:p-8 lg:p-12 rounded-xl shadow-2xl border border-amber-300/50 relative overflow-hidden mx-auto max-w-full">
         {/* Paper texture overlay */}
         <div className="absolute inset-0 opacity-5 bg-gradient-to-br from-amber-100 via-transparent to-amber-100" />
         
         {/* Letter header */}
-        <div className="text-center mb-6 sm:mb-8 relative z-10">
-          <div className="w-12 sm:w-16 h-px bg-primary/30 mx-auto mb-3 sm:mb-4" />
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif text-primary/80 mb-2">Carta de Despedida</h2>
-          <div className="w-12 sm:w-16 h-px bg-primary/30 mx-auto" />
+        <div className="text-center mb-4 sm:mb-6 md:mb-8 relative z-10">
+          <div className="w-16 sm:w-20 md:w-24 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent mx-auto mb-3 sm:mb-4" />
+          <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-serif text-primary/90 mb-2 font-bold">✉️ Carta de Despedida</h2>
+          <div className="w-16 sm:w-20 md:w-24 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent mx-auto" />
         </div>
 
         {/* Letter content */}
         <div 
           ref={setTextAreaRef}
-          className="relative z-10 space-y-4 sm:space-y-6 font-serif text-base sm:text-lg lg:text-xl leading-relaxed text-gray-800 text-center"
+          className="relative z-10 space-y-3 sm:space-y-4 md:space-y-6 font-serif text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed text-gray-800 text-center max-w-none"
         >
           {letterContent.map((paragraph, index) => (
             <p key={index} className="relative">
@@ -101,14 +101,14 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({
 
           {/* Signature */}
           {showSignature && (
-            <div className="mt-12 text-right animate-fade-in">
-              <p className="text-xl font-serif text-primary/80 mb-2">Con cariño y gratitud,</p>
+            <div className="mt-8 sm:mt-12 text-center sm:text-right animate-fade-in">
+              <p className="text-base sm:text-lg md:text-xl font-serif text-primary/80 mb-2 sm:mb-3">💝 Con cariño y gratitud,</p>
               <div className="relative inline-block">
-                <p className="text-2xl font-signature text-primary font-bold">
-                  {signature}
+                <p className="text-xl sm:text-2xl md:text-3xl font-signature text-primary font-bold">
+                  ✨ {signature} ✨
                 </p>
                 {/* Signature underline */}
-                <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary/60 to-transparent animate-fade-in" 
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/60 via-primary/80 to-primary/60 rounded-full animate-fade-in shadow-lg" 
                      style={{ animationDelay: '0.5s' }} />
               </div>
             </div>

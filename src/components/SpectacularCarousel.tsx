@@ -44,14 +44,16 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
     setTimeout(() => setIsTransitioning(false), 600);
   };
 
-  // Auto-advance carousel
+  // Auto-advance carousel with better performance
   useEffect(() => {
     const interval = setInterval(() => {
-      nextImage();
-    }, 4000);
+      if (!isTransitioning) {
+        nextImage();
+      }
+    }, 5000); // Increased interval for better UX
 
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [currentIndex, isTransitioning]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -96,7 +98,7 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 sm:px-6 lg:px-8">
         {/* Main Image Display */}
         <div className="relative mb-4 sm:mb-6 lg:mb-8">
-          <div className="w-72 h-48 sm:w-80 sm:h-52 md:w-96 md:h-64 lg:w-[28rem] lg:h-72 xl:w-[32rem] xl:h-80 rounded-2xl overflow-hidden elegant-glow">
+          <div className="w-80 h-56 sm:w-96 sm:h-64 md:w-[28rem] md:h-72 lg:w-[32rem] lg:h-80 xl:w-[36rem] xl:h-[22rem] rounded-3xl overflow-hidden elegant-glow shadow-2xl backdrop-blur-sm border border-white/20">
             {images[currentIndex].type === 'video' ? (
               <video
                 src={images[currentIndex].src}
@@ -126,16 +128,16 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
         </div>
 
         {/* Image Title and Description */}
-        <div className="text-center max-w-xs sm:max-w-lg md:max-w-xl lg:max-w-2xl mb-4 sm:mb-6 lg:mb-8 px-2">
+        <div className="text-center max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-3xl mb-4 sm:mb-6 lg:mb-8 px-4">
           <h3 
             key={`title-${currentIndex}`}
-            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-2 sm:mb-3 lg:mb-4 animate-fade-in text-glow"
+            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-primary mb-3 sm:mb-4 lg:mb-6 animate-fade-in text-glow drop-shadow-lg"
           >
             {images[currentIndex].title}
           </h3>
           <p 
             key={`desc-${currentIndex}`}
-            className="text-sm sm:text-base md:text-lg lg:text-xl text-foreground/80 animate-fade-in leading-relaxed"
+            className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-foreground/90 animate-fade-in leading-relaxed font-medium bg-background/20 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 sm:py-4 shadow-lg border border-white/10"
             style={{ animationDelay: '0.2s' }}
           >
             {images[currentIndex].description}
@@ -143,19 +145,19 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
         </div>
 
         {/* Carousel Controls */}
-        <div className="flex items-center gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-4 sm:mb-6 lg:mb-8">
+        <div className="flex items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-6 sm:mb-8 lg:mb-10">
           <Button
             variant="outline"
             size="icon"
             onClick={prevImage}
-            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-primary/30 hover:border-primary hover:bg-primary/10"
+            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-primary/40 hover:border-primary hover:bg-primary/20 backdrop-blur-sm bg-background/20 shadow-lg transition-all duration-300 hover:scale-110"
             disabled={isTransitioning}
           >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
           </Button>
 
           {/* Dot Indicators */}
-          <div className="flex gap-2 sm:gap-3">
+          <div className="flex gap-2 sm:gap-3 px-4 py-2 bg-background/20 backdrop-blur-sm rounded-full shadow-lg">
             {images.map((_, index) => (
               <button
                 key={index}
@@ -168,10 +170,10 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
                 disabled={isTransitioning}
               >
                 <Circle
-                  className={`w-2 h-2 sm:w-3 sm:h-3 ${
+                  className={`w-3 h-3 sm:w-4 sm:h-4 transition-colors duration-300 ${
                     index === currentIndex
                       ? 'fill-primary text-primary'
-                      : 'fill-muted text-muted'
+                      : 'fill-muted-foreground/50 text-muted-foreground/50 hover:fill-primary/70 hover:text-primary/70'
                   }`}
                 />
               </button>
@@ -182,30 +184,30 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
             variant="outline"
             size="icon"
             onClick={nextImage}
-            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full border-primary/30 hover:border-primary hover:bg-primary/10"
+            className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full border-primary/40 hover:border-primary hover:bg-primary/20 backdrop-blur-sm bg-background/20 shadow-lg transition-all duration-300 hover:scale-110"
             disabled={isTransitioning}
           >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
           </Button>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full max-w-sm sm:max-w-none px-4 sm:px-0">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 justify-center items-center w-full max-w-md sm:max-w-lg mx-auto px-4">
           <Button
             variant="outline"
             onClick={onPrev}
-            className="bg-secondary/20 border-primary/30 hover:bg-secondary/40 hover:border-primary text-xs sm:text-sm md:text-base px-3 sm:px-4 py-2"
+            className="w-full sm:w-auto bg-background/80 backdrop-blur-sm border-primary/40 hover:bg-primary/10 hover:border-primary text-sm sm:text-base md:text-lg px-6 sm:px-8 py-3 sm:py-4 shadow-lg transition-all duration-300 hover:scale-105"
           >
-            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
             Anterior
           </Button>
           
           <Button
             onClick={onNext}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs sm:text-sm md:text-base px-3 sm:px-4 py-2"
+            className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 text-sm sm:text-base md:text-lg px-6 sm:px-8 py-3 sm:py-4 shadow-lg transition-all duration-300 hover:scale-105"
           >
             Continuar 🎉
-            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-2" />
           </Button>
         </div>
       </div>
