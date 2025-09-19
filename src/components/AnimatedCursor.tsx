@@ -37,34 +37,24 @@ const AnimatedCursor: React.FC = () => {
   }
 
   useEffect(() => {
-    let rafId: number;
-    
     const updateMousePosition = (e: MouseEvent) => {
-      // Throttle mouse movements for better performance
-      if (rafId) return;
-      
-      rafId = requestAnimationFrame(() => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
+      setMousePosition({ x: e.clientX, y: e.clientY });
 
-        // Create particle trail with controlled frequency
-        if (Math.random() > 0.7) { // Only create particles 30% of the time
-          const particle: Particle = {
-            id: particleIdRef.current++,
-            x: e.clientX,
-            y: e.clientY,
-            size: Math.random() * 3 + 1,
-            opacity: 0.6,
-            velocity: {
-              x: (Math.random() - 0.5) * 1.5,
-              y: (Math.random() - 0.5) * 1.5
-            },
-            life: 20 + Math.random() * 10 // Shorter life for better performance
-          };
+      // Create particle trail
+      const particle: Particle = {
+        id: particleIdRef.current++,
+        x: e.clientX,
+        y: e.clientY,
+        size: Math.random() * 4 + 2,
+        opacity: 0.8,
+        velocity: {
+          x: (Math.random() - 0.5) * 2,
+          y: (Math.random() - 0.5) * 2
+        },
+        life: 30 + Math.random() * 20
+      };
 
-          setParticles(prev => [...prev.slice(-8), particle]); // Limit to 8 particles
-        }
-        rafId = 0;
-      });
+      setParticles(prev => [...prev.slice(-15), particle]);
     };
 
     const handleMouseDown = () => setIsClicking(true);
@@ -72,32 +62,31 @@ const AnimatedCursor: React.FC = () => {
 
     const handleMouseEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isInteractive = 
+      if (
         target.tagName === 'BUTTON' ||
         target.tagName === 'A' ||
         target.classList.contains('cursor-pointer') ||
         target.closest('button') ||
-        target.closest('a') ||
-        target.closest('[role="button"]');
-      
-      setIsHovering(!!isInteractive);
+        target.closest('a')
+      ) {
+        setIsHovering(true);
+      } else {
+        setIsHovering(false);
+      }
     };
 
-    // Only hide cursor on desktop with pointer device
-    if (window.matchMedia('(min-width: 769px) and (pointer: fine)').matches) {
-      document.body.style.cursor = 'none';
-    }
+    // Hide default cursor
+    document.body.style.cursor = 'none';
 
-    window.addEventListener('mousemove', updateMousePosition, { passive: true });
-    window.addEventListener('mouseover', handleMouseEnter, { passive: true });
-    window.addEventListener('mousedown', handleMouseDown, { passive: true });
-    window.addEventListener('mouseup', handleMouseUp, { passive: true });
+    window.addEventListener('mousemove', updateMousePosition);
+    window.addEventListener('mousemove', handleMouseEnter);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      if (rafId) cancelAnimationFrame(rafId);
       document.body.style.cursor = 'auto';
       window.removeEventListener('mousemove', updateMousePosition);
-      window.removeEventListener('mouseover', handleMouseEnter);
+      window.removeEventListener('mousemove', handleMouseEnter);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
       if (animationFrameRef.current) {
@@ -106,44 +95,33 @@ const AnimatedCursor: React.FC = () => {
     };
   }, []);
 
-  // Optimize particle animation with better performance
+  // Animate particles
   useEffect(() => {
-    let lastTime = 0;
-    const targetFPS = 60;
-    const frameTime = 1000 / targetFPS;
-
-    const animateParticles = (currentTime: number) => {
-      if (currentTime - lastTime >= frameTime) {
-        setParticles(prev => {
-          if (prev.length === 0) return prev;
-          
-          return prev
-            .map(particle => ({
-              ...particle,
-              x: particle.x + particle.velocity.x,
-              y: particle.y + particle.velocity.y,
-              opacity: particle.opacity * 0.96,
-              life: particle.life - 1,
-              size: particle.size * 0.99
-            }))
-            .filter(particle => particle.life > 0 && particle.opacity > 0.05);
-        });
-        lastTime = currentTime;
-      }
+    const animateParticles = () => {
+      setParticles(prev => 
+        prev
+          .map(particle => ({
+            ...particle,
+            x: particle.x + particle.velocity.x,
+            y: particle.y + particle.velocity.y,
+            opacity: particle.opacity * 0.95,
+            life: particle.life - 1,
+            size: particle.size * 0.98
+          }))
+          .filter(particle => particle.life > 0 && particle.opacity > 0.01)
+      );
 
       animationFrameRef.current = requestAnimationFrame(animateParticles);
     };
 
-    if (particles.length > 0) {
-      animationFrameRef.current = requestAnimationFrame(animateParticles);
-    }
+    animationFrameRef.current = requestAnimationFrame(animateParticles);
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [particles.length > 0]);
+  }, []);
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999]">

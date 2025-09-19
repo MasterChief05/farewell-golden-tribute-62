@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Feather } from 'lucide-react';
 
 interface AnimatedLetterProps {
@@ -18,13 +18,13 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({
   const [isWriting, setIsWriting] = useState(true);
   const [textAreaRef, setTextAreaRef] = useState<HTMLDivElement | null>(null);
 
-  const skipAnimation = useCallback(() => {
+  const skipAnimation = () => {
     setCurrentParagraph(letterContent.length);
     setCurrentChar(0);
     setShowSignature(true);
     setIsWriting(false);
     onComplete?.();
-  }, [letterContent.length, onComplete]);
+  };
 
 
   useEffect(() => {
@@ -138,24 +138,23 @@ const AnimatedLetter: React.FC<AnimatedLetterProps> = ({
         )}
       </div>
 
-      {/* Optimized floating feathers */}
+      {/* Floating feathers animation */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {useMemo(() => 
-          [...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-pulse opacity-20"
-              style={{
-                left: `${25 + (i * 20)}%`,
-                top: `${20 + (i * 15)}%`,
-                animationDelay: `${i * 1}s`,
-                animationDuration: `${4 + (i * 0.5)}s`,
-                transform: `rotate(${i * 45}deg) scale(${0.8 + (i * 0.1)})`,
-              }}
-            >
-              <Feather className="w-4 h-4 text-amber-600/30" />
-            </div>
-          )), [])}
+        {[...Array(6)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-pulse opacity-30"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`,
+              transform: `rotate(${Math.random() * 360}deg) scale(${0.5 + Math.random() * 0.5})`,
+            }}
+          >
+            <Feather className="w-6 h-6 text-amber-600/40" />
+          </div>
+        ))}
       </div>
     </div>
   );

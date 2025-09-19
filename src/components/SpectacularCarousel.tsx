@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -23,37 +23,37 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const nextImage = useCallback(() => {
+  const nextImage = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev + 1) % images.length);
-    setTimeout(() => setIsTransitioning(false), 400); // Reduced transition time
-  }, [isTransitioning, images.length]);
+    setTimeout(() => setIsTransitioning(false), 600);
+  };
 
-  const prevImage = useCallback(() => {
+  const prevImage = () => {
     if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-    setTimeout(() => setIsTransitioning(false), 400);
-  }, [isTransitioning, images.length]);
+    setTimeout(() => setIsTransitioning(false), 600);
+  };
 
-  const goToImage = useCallback((index: number) => {
-    if (isTransitioning || index === currentIndex) return;
+  const goToImage = (index: number) => {
+    if (isTransitioning) return;
     setIsTransitioning(true);
     setCurrentIndex(index);
-    setTimeout(() => setIsTransitioning(false), 400);
-  }, [isTransitioning, currentIndex]);
+    setTimeout(() => setIsTransitioning(false), 600);
+  };
 
-  // Optimized auto-advance with cleanup
+  // Auto-advance carousel with better performance
   useEffect(() => {
     const interval = setInterval(() => {
       if (!isTransitioning) {
         nextImage();
       }
-    }, 6000); // Longer interval for better UX
+    }, 5000); // Increased interval for better UX
 
     return () => clearInterval(interval);
-  }, [nextImage, isTransitioning]);
+  }, [currentIndex, isTransitioning]);
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
@@ -212,21 +212,20 @@ const SpectacularCarousel: React.FC<SpectacularCarouselProps> = ({
         </div>
       </div>
 
-      {/* Optimized Floating Particles */}
+      {/* Floating Particles */}
       <div className="absolute inset-0 pointer-events-none">
-        {useMemo(() => 
-          [...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-2 h-2 bg-primary/20 rounded-full animate-pulse"
-              style={{
-                left: `${20 + (i * 15)}%`,
-                top: `${30 + (i * 10)}%`,
-                animationDelay: `${i * 0.5}s`,
-                animationDuration: `${3 + (i * 0.5)}s`,
-              }}
-            />
-          )), [])}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-primary/30 rounded-full animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+              animationDuration: `${2 + Math.random() * 2}s`,
+            }}
+          />
+        ))}
       </div>
     </div>
   );
