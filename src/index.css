@@ -463,7 +463,19 @@
   .animate-fade-in,
   .animate-pulse,
   .animate-bounce {
-    animation-duration: 0.2s;
+    animation-duration: 0.15s; /* Faster on mobile */
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -564,13 +576,35 @@ button, a, [role="button"], input, textarea, select {
   }
 }
 
-/* Keep normal cursor on mobile */
-@media (max-width: 768px) {
+/* Keep normal cursor on mobile and touch devices */
+@media (max-width: 768px), (pointer: coarse) {
   * {
     cursor: auto !important;
   }
   
   button, a, [role="button"], input, textarea, select {
     cursor: pointer !important;
+  }
+}
+
+/* Production optimizations */
+@media (min-width: 769px) {
+  /* GPU acceleration for smooth animations */
+  .animate-fade-in,
+  .animate-pulse,
+  .cursor-element,
+  .btn-enhanced {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  /* Optimize will-change for better performance */
+  .cursor-element {
+    will-change: transform;
+  }
+  
+  .animate-pulse {
+    will-change: opacity;
   }
 }
